@@ -1,11 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { Client } = require('pg');
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
 
 // Configuración de bodyParser para procesar solicitudes JSON
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

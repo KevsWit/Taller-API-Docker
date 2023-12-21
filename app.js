@@ -1,46 +1,113 @@
-// Variables globales
-const taskList = document.getElementById('task-list');
-const taskNameInput = document.getElementById('taskName');
+document.addEventListener('DOMContentLoaded', function () {
+    loadTasks();
 
-// Función para agregar una tarea
+    // Agregar evento al botón para agregar tarea
+    document.getElementById('addTaskButton').addEventListener('click', showAddTaskForm);
+});
+
+function loadTasks() {
+    fetch('http://localhost:3000/tasks')
+        .then(response => response.json())
+        .then(tasks => {
+            const taskList = document.getElementById('task-list');
+            taskList.innerHTML = '';
+
+            tasks.forEach(task => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <span>${task.nombre}</span>
+                    <button onclick="deleteTask(${task.id})">Eliminar</button>
+                    <button onclick="showEditTaskForm(${task.id}, '${task.nombre}', '${task.estado}')">Editar</button>
+                `;
+                taskList.appendChild(listItem);
+            });
+        })
+        .catch(error => console.error('Error al cargar tareas:', error));
+}
+
 function addTask() {
-    const taskName = taskNameInput.value.trim();
+    showAddTaskForm();
+}
+
+function submitNewTask() {
+    const newTaskName = document.getElementById('newTaskName').value.trim();
+    if (newTaskName !== '') {
+        fetch('http://localhost:3000/tasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ nombre: newTaskName, estado: 'pendiente' }),
+        })
+        .then(response => response.json())
+        .then(newTask => {
+            console.log('Tarea agregada:', newTask);
+            loadTasks();
+            hideAddTaskForm();
+        })
+        .catch(error => console.error('Error al agregar tarea:', error));
+    }
+}
+
+function showAddTaskForm() {
+    document.getElementById('addTaskForm').style.display = 'block';
+}
+
+function hideAddTaskForm() {
+    document.getElementById('addTaskForm').style.display = 'none';
+}
+
+function editTask(taskId) {
+    const taskName = document.getElementById('editTaskName').value.trim();
+    const taskState = document.getElementById('editTaskState').value.trim();
 
     if (taskName !== '') {
-        // Crear elemento de lista
-        const listItem = document.createElement('li');
-        listItem.className = 'task-item';
-
-        // Contenido de la tarea
-        listItem.innerHTML = `
-            <span>${taskName}</span>
-            <button onclick="editTask(this)">Editar</button>
-            <button onclick="deleteTask(this)">Eliminar</button>
-        `;
-
-        // Agregar la tarea a la lista
-        taskList.appendChild(listItem);
-
-        // Limpiar el campo de entrada
-        taskNameInput.value = '';
-    } else {
-        alert('Por favor, ingrese un nombre de tarea válido.');
+        fetch(`http://localhost:3000/tasks/${taskId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ nombre: taskName, estado: taskState }),
+        })
+        .then(response => response.json())
+        .then(updatedTask => {
+            console.log('Tarea actualizada:', updatedTask);
+            loadTasks();
+            hideEditTaskForm(); // Ocultar el formulario después de actualizar la tarea
+        })
+        .catch(error => console.error('Error al actualizar tarea:', error));
     }
 }
 
-// Función para editar una tarea
-function editTask(button) {
-    const listItem = button.parentNode;
-    const currentName = listItem.querySelector('span').innerText;
-    const newName = prompt('Editar tarea:', currentName);
-
-    if (newName !== null) {
-        listItem.querySelector('span').innerText = newName;
-    }
+function deleteTask(taskId) {
+    fetch(`http://localhost:3000/tasks/${taskId}`, {
+        method: 'DELETE',
+    })
+    .then(response => response.json())
+    .then(deletedTask => {
+        console.log('Tarea eliminada:', deletedTask);
+        loadTasks();
+    })
+    .catch(error => console.error('Error al eliminar tarea:', error));
 }
 
-// Función para eliminar una tarea
-function deleteTask(button) {
-    const listItem = button.parentNode;
-    taskList.removeChild(listItem);
+function showAddTaskForm() {
+    document.getElementById('addTaskForm').style.display = 'block';
+}
+
+function hideAddTaskForm() {
+    document.getElementById('addTaskForm').style.display = 'none';
+}
+
+function showEditTaskForm(taskId, taskName, taskState) {
+    document.getElementById('editTaskForm').style.display = 'block';
+
+    // Prellenar el formulario de edición con los datos de la tarea
+    document.getElementById('editTaskId').value = taskId;
+    document.getElementById('editTaskName').value = taskName;
+    document.getElementById('editTaskState').value = taskState;
+}
+
+function hideEditTaskForm() {
+    document.getElementById('editTaskForm').style.display = 'none';
 }

@@ -13,10 +13,28 @@
             <!-- Aquí se mostrarán las tareas -->
         </ul>
         <div>
-            <label for="taskName">Nombre de la tarea:</label>
-            <input type="text" id="taskName" placeholder="Nombre de la tarea">
-            <button onclick="addTask()">Agregar Tarea</button>
+	    <button onclick="addTask()">Agregar Tarea</button>
+	</div>
+	<!-- Formulario para agregar tarea -->
+	<div id="addTaskForm" style="display: none;">
+	    <h2>Agregar Tarea</h2>
+	    <label for="newTaskName">Nombre de la tarea:</label>
+	    <input type="text" id="newTaskName" placeholder="Nombre de la tarea">
+	    <button onclick="submitNewTask()">Agregar Tarea</button>
+	    <button onclick="hideAddTaskForm()">Cancelar</button>
+	</div>
+        <!-- Formulario para editar tarea -->
+        <div id="editTaskForm" style="display: none;">
+            <h2>Editar Tarea</h2>
+            <input type="hidden" id="editTaskId">
+            <label for="editTaskName">Nombre de la tarea:</label>
+            <input type="text" id="editTaskName" placeholder="Nombre de la tarea">
+            <label for="editTaskState">Estado:</label>
+            <input type="text" id="editTaskState" placeholder="Estado">
+            <button onclick="editTask(document.getElementById('editTaskId').value)">Guardar Cambios</button>
+            <button onclick="hideEditTaskForm()">Cancelar</button>
         </div>
+        <!--<button id="addTaskButton">Agregar Tarea</button>-->
     </div>
     <script src="app.js"></script>
 </body>
