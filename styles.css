@@ -1,17 +1,25 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    margin: 20px 0;
+    background: linear-gradient(90deg, #11125e, #9100f9);
 }
 
 #app {
     max-width: 600px;
     margin: 0 auto;
+    border: 2px solid #ddd; /* Borde alrededor de todo el contenedor */
+    padding: 10px; /* Añadir un poco de espacio interno para separar el contenido del borde */
+    background: #fff;
 }
 
 #task-list {
     list-style-type: none;
     padding: 0;
+    margin-top: 15px;
+    border: 1px solid #ddd; /* Borde alrededor de la lista de tareas */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
 
 .task-item {
     margin-bottom: 10px;
@@ -19,8 +27,43 @@ body {
     padding: 10px;
     display: flex;
     justify-content: space-between;
+    background-color: #fff; /* Color de fondo predeterminado */
+    transition: background-color 0.3s ease; /* Transición suave de color de fondo */
+}
+
+.task-item:hover {
+    background-color: #f9f9f9; /* Color de fondo al pasar el ratón */
 }
 
 .task-item button {
     margin-left: 10px;
+    background-color: #ff9800; /* Color naranja */
+    color: #fff; /* Color del texto del botón */
+    border: none;
+    padding: 8px 15px; /* Ajustar el relleno para un botón redondo */
+    border-radius: 20px; /* Hacer que el botón sea redondo */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.task-item button:hover {
+    background-color: #e08e00; /* Cambiar el color al pasar el ratón */
+}
+
+#app button,
+#addTaskForm button,
+#editTaskForm button {
+    margin-left: 10px;
+    background-color: #ff9800;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#addTaskForm button:hover,
+#editTaskForm button:hover {
+    background-color: #e08e00;
 }

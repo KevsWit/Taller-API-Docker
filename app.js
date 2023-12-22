@@ -27,6 +27,7 @@ function loadTasks() {
 
 function addTask() {
     showAddTaskForm();
+
 }
 
 function submitNewTask() {
@@ -50,7 +51,9 @@ function submitNewTask() {
 }
 
 function showAddTaskForm() {
+
     document.getElementById('addTaskForm').style.display = 'block';
+
 }
 
 function hideAddTaskForm() {
