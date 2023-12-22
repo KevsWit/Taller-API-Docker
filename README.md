@@ -75,13 +75,13 @@ git clone https://github.com/KevsWit/Taller-API-Docker.git proyecto
 cd proyecto
 ```
 
-## Configuración de Docker para Node.js
+# Configuración de Docker para Node.js
 
-# Iniciar contenedor de Node.js
+## Iniciar contenedor de Node.js
 ```
 docker run -it -d --name nodejs_container -p 3000:3000 -v $(pwd)/proyecto:/root/backend ubuntu bash
  ```
-# Actualizar e instalar dependencias
+## Actualizar e instalar dependencias
 ```
 apt update
 apt-get install nano
@@ -89,11 +89,11 @@ apt install nodejs
 apt install npm
 apt install iputils-ping
 ```
-# Obtener la dirección IP del contenedor PostgreSQL
+## Obtener la dirección IP del contenedor PostgreSQL
 ```
 docker inspect postgres_container | grep IPAddress
 ```
-# Realizar ping a una dirección
+## Realizar ping a una dirección
 ```
 ping [dirección IP]
 ```
@@ -117,11 +117,11 @@ for ip_contenedor in "$@"; do
     fi
 done
 ```
-# Instalar paquetes Node.js
+## Instalar paquetes Node.js
 ```
 npm install express body-parser pg cors
 ```
-# Ejecutar la aplicación Node.js
+## Ejecutar la aplicación Node.js
 ``` 
 node backend.js
  ```
