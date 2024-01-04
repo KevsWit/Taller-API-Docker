@@ -126,11 +126,9 @@ npm install express body-parser pg cors
 node backend.js
  ```
 # Dockerizacion de la api
-Se tienen una carpeta principal en donde se encontrar nuestro Dockerfile principal acompañado de la carpeta en donde estara la database, el backend, el frontend y
-el proyecto de donde se cara la api, cada una de estas carpetas consta de su propio Dockerfile. Previo a todo esto se necesitara clonar el repositorio de github
-en la carpeta principal
+Se tiene una carpeta principal donde se encuentra nuestro Dockerfile principal, acompañado de carpetas para la base de datos, el backend, el frontend y el proyecto desde donde se levanta la API. Cada una de estas carpetas consta de su propio Dockerfile. Previo a todo esto, será necesario clonar el repositorio de GitHub en la carpeta principal.
 ```
-git clone https://github.com/KevsWit/Taller-API-Docker.git /usr/share/nginx/html
+git clone https://github.com/KevsWit/Taller-API-Docker.git proyecto
 ```
 Comenzaremos por la base de datos
 ## Dockerfile para base de datos en posgresFROM postgres
@@ -143,7 +141,7 @@ VOLUME /var/lib/postgresql/data
 COPY dataTodo.sql /docker-entrypoint-initdb.d/
 EXPOSE 5432
 ```
-Tambien usamos un script .sql para poder crear la base de datos ademas de creo una carpeta llama database para poder tener la persistencia en los datos.
+También utilizamos un script .sql para poder crear la base de datos. Además, creamos una carpeta llamada "database" para poder garantizar la persistencia de los datos.
 Aquí el script:
 ```                                              
 -- init.sql
