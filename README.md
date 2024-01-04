@@ -125,4 +125,101 @@ npm install express body-parser pg cors
 ``` 
 node backend.js
  ```
+# Dockerizacion de la api
+Se tienen una carpeta principal en donde se encontrar nuestro Dockerfile principal acompañado de la carpeta en donde estara la database, el backend, el frontend y
+el proyecto de donde se cara la api, cada una de estas carpetas consta de su propio Dockerfile. Previo a todo esto se necesitara clonar el repositorio de github
+en la carpeta principal
+```
+git clone https://github.com/KevsWit/Taller-API-Docker.git /usr/share/nginx/html
+```
+Comenzaremos por la base de datos
+## Dockerfile para base de datos en posgresFROM postgres
+```
+FROM postgres
 
+ENV POSTGRES_PASSWORD = 1234
+VOLUME /var/lib/postgresql/data
+
+COPY dataTodo.sql /docker-entrypoint-initdb.d/
+EXPOSE 5432
+```
+Tambien usamos un script .sql para poder crear la base de datos ademas de creo una carpeta llama database para poder tener la persistencia en los datos.
+Aquí el script:
+```                                              
+-- init.sql
+CREATE DATABASE bbdd;
+\c bbdd;
+CREATE TABLE tarea (
+    id serial PRIMARY KEY,
+    nombre text,
+    estado text
+);
+```
+comando para construir el contenedor y ejecutar el contenedor.
+```
+docker build -t posgres .
+docker run --name postgres_container -d -p 5432:5432 -v $(pwd)/database:/var/lib/postgresql/data dataposgres
+```
+El comando de run deber ser ejecutado en donde se tenga la carpeta de database
+## Dockerfile para el frontend usando nginx
+Para este caso es lo mismo en nuestra carpeta de frontend tendremos el siguiente Dockerfile
+```
+# Dockerfile para Nginx 
+
+# Utiliza la imagen base de Nginx
+FROM nginx
+
+# Volumen
+VOLUME /usr/share/nginx/html
+
+# Exponer el puerto 80
+EXPOSE 80
+
+# Instalar git (puedes necesitar sudo si estás en una imagen que lo requiere)
+RUN apt-get update && apt-get install -y git
+
+# Comando predeterminado para iniciar Nginx
+CMD ["nginx", "-g", "daemon off;"]
+```
+comando para construir el contenedor y ejecutar el contenedor.
+```
+docker build -t fronted .
+docker run -d --name nginx_container -p 8081:80 -v /home/administrador/Documentos/dockerFile/proyecto:/usr/share/nginx/html fronted
+```
+La ruta especificado para el origien del volumen de montaje, es en donde se encuentra el proyecto clonado previamente en la carpeta principal
+## Dockerfile para el backend usando ubuntu
+Este Dockerfile debera esta en nuestra carpeta principal
+```
+# Utiliza la imagen base de Ubuntu
+FROM ubuntu
+                                     
+# Establece el directorio de trabajo
+WORKDIR /root/backend
+
+# Copia los archivos de la aplicación al contenedor
+COPY proyecto /root/backend
+
+# Actualiza e instala dependencias
+RUN apt-get update
+RUN apt-get install -y npm
+RUN apt-get install -y nodejs
+
+# Instala paquetes Node.js
+RUN npm install express
+RUN npm install body-parser
+RUN npm install  pg
+RUN npm install cors
+
+# Expone el puerto 3000
+EXPOSE 3000
+
+# Comando predeterminado para ejecutar la aplicación Node.js
+CMD ["node", "backend.js"]
+
+```
+Este se encuentrar principal porque estamos copiando el proyecto a la carpeta del backend creada en el contenedor
+comando para construir el contenedor y ejecutar el contenedor.
+```
+docker build -t backend .
+docker run -it -d --name nodejs_container -p 3000:3000 -v $(pwd)/proyecto:/root/backend backend
+```
