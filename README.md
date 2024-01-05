@@ -131,7 +131,7 @@ Se tiene una carpeta principal donde se encuentra nuestro Dockerfile principal, 
 git clone https://github.com/KevsWit/Taller-API-Docker.git proyecto
 ```
 Comenzaremos por la base de datos
-## Dockerfile para base de datos en posgresFROM postgres
+## Dockerfile para base de datos en posgres
 ```
 FROM postgres
 
@@ -215,7 +215,8 @@ EXPOSE 3000
 CMD ["node", "backend.js"]
 
 ```
-Este se encuentrar principal porque estamos copiando el proyecto a la carpeta del backend creada en el contenedor
+Este se encuentra en la carpeta principal, porque estamos copiando el proyecto a la carpeta del backend creada en el contenedor.
+
 comando para construir el contenedor y ejecutar el contenedor.
 ```
 docker build -t backend .
