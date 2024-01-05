@@ -189,30 +189,26 @@ La ruta especificado para el origien del volumen de montaje, es en donde se encu
 Este Dockerfile debera esta en nuestra carpeta principal
 ```
 # Utiliza la imagen base de Ubuntu
-FROM ubuntu
-                                     
-# Establece el directorio de trabajo
-WORKDIR /root/backend
-
-# Copia los archivos de la aplicación al contenedor
-COPY proyecto /root/backend
-
+FROM ubuntu:18.04
 # Actualiza e instala dependencias
-RUN apt-get update
-RUN apt-get install -y npm
-RUN apt-get install -y nodejs
+RUN apt-get update -y
+RUN apt install npm -y
+
+WORKDIR /root
+
+RUN mkdir backend
+
+ADD [ "/proyecto/backend.js", "/root/backend"]
 
 # Instala paquetes Node.js
-RUN npm install express
-RUN npm install body-parser
-RUN npm install  pg
-RUN npm install cors
+RUN npm init -y
+RUN npm install express body-parser pg cors -y
 
 # Expone el puerto 3000
 EXPOSE 3000
 
 # Comando predeterminado para ejecutar la aplicación Node.js
-CMD ["node", "backend.js"]
+CMD ["node", "/root/backend/backend.js"]
 
 ```
 Este se encuentra en la carpeta principal, porque estamos copiando el proyecto a la carpeta del backend creada en el contenedor.
