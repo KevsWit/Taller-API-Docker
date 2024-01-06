@@ -125,15 +125,15 @@ npm install express body-parser pg cors
 ``` 
 node backend.js
  ```
-# Dockerizacion de la api
+# Dockerizacion de la api con DOCKERFILE
 Se tiene una ruta principal donde se encuentra nuestro Dockerfile principal.
 Primero clonaremos el proyecto para tener los archivos necesarios.
-__*Nota: Se tienen direcciones ip fijadas en el archivo backend. Por lo que la dirección en cuestión se obtiene al crear en el orden que será expuesto a continuación y suponiendo que no existen dockers ya creados. De tener distinto, cambiar la dirección ip de postgres a la correspondiente en backend.js*__
+__*Nota: Se tienen direcciones ip fijadas en el archivo backend.js. Por lo que la dirección en cuestión se obtiene al crear en el orden que será expuesto a continuación y suponiendo que no existen dockers ya creados. De tener distinto, cambiar la dirección ip de postgres a la correspondiente en backend.js*__
 ```
 git clone https://github.com/KevsWit/Taller-API-Docker.git proyecto
 ```
 Comenzaremos por la base de datos
-## Dockerfile para base de datos en posgres
+## Dockerfile para base de datos en postgres
 
 Utilizamos un script denominado dataTodo.sql para poder crear la base de datos.
 ```
