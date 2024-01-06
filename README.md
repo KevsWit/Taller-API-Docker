@@ -182,9 +182,6 @@ docker run --name postgres_container -d -p 5432:5432 -v $(pwd)/database:/var/lib
 ## Dockerfile para el frontend usando nginx
 Para este caso es lo mismo en nuestra carpeta de frontend tendremos el siguiente Dockerfile
 ``` 
-touch Dockerfile
-``` 
-``` 
 nano Dockerfile
 ```
 ```
@@ -213,6 +210,9 @@ docker build -t frontend .
 docker run --name nginx_container -d -p 8081:80 -v $(pwd)/proyecto:/usr/share/nginx/html frontend
 ```
 ## Dockerfile para el backend usando ubuntu
+``` 
+nano Dockerfile
+```
 ```
 # Utiliza la imagen base de Ubuntu
 FROM ubuntu
@@ -230,9 +230,6 @@ RUN npm init -y && \
 RUN mkdir backend
 VOLUME /root/backend
 WORKDIR /root/backend
-
-# Copia los archivos necesarios a la imagen
-#COPY . .
 
 # Expone el puerto 3000
 EXPOSE 3000
