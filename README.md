@@ -126,24 +126,24 @@ npm install express body-parser pg cors
 node backend.js
  ```
 # Dockerizacion de la api
-Se tiene una carpeta principal donde se encuentra nuestro Dockerfile principal, acompañado de carpetas para la base de datos, el backend, el frontend y el proyecto desde donde se levanta la API. Cada una de estas carpetas consta de su propio Dockerfile. Previo a todo esto, será necesario clonar el repositorio de GitHub en la carpeta principal.
+Se tiene una ruta principal donde se encuentra nuestro Dockerfile principal.
+Primero clonaremos el proyecto para tener los archivos necesarios.
+__*Nota: Se tienen direcciones ip fijadas en el archivo backend. Por lo que la dirección en cuestión se obtiene al crear en el orden que será expuesto a continuación y suponiendo que no existen dockers ya creados. De tener distinto, cambiar la dirección ip de postgres a la correspondiente en backend.js*__
 ```
 git clone https://github.com/KevsWit/Taller-API-Docker.git proyecto
 ```
 Comenzaremos por la base de datos
 ## Dockerfile para base de datos en posgres
-```
-FROM postgres
 
-ENV POSTGRES_PASSWORD = 1234
-VOLUME /var/lib/postgresql/data
-
-COPY dataTodo.sql /docker-entrypoint-initdb.d/
-EXPOSE 5432
+Utilizamos un script denominado dataTodo.sql para poder crear la base de datos.
 ```
-También utilizamos un script .sql para poder crear la base de datos. Además, creamos una carpeta llamada "database" para poder garantizar la persistencia de los datos.
+touch dataTodo.sql
+```
+```
+nano dataTodo.sql
+```
 Aquí el script:
-```                                              
+```
 -- init.sql
 CREATE DATABASE bbdd;
 \c bbdd;
@@ -153,14 +153,40 @@ CREATE TABLE tarea (
     estado text
 );
 ```
-comando para construir el contenedor y ejecutar el contenedor.
+Crearemos un archivo Dockerfile
 ```
-docker build -t posgres .
-docker run --name postgres_container -d -p 5432:5432 -v $(pwd)/database:/var/lib/postgresql/data dataposgres
+touch Dockerfile
 ```
-El comando de run deber ser ejecutado en donde se tenga la carpeta de database
+```
+nano Dockerfile
+```
+Colocamos el siguiente code
+```
+FROM postgres
+ENV POSTGRES_USER postgres
+ENV POSTGRES_PASSWORD 1234
+VOLUME /var/lib/postgresql/data
+
+COPY dataTodo.sql /docker-entrypoint-initdb.d/
+EXPOSE 5432
+```
+Además, tenemos una carpeta llamada "database" para poder garantizar la persistencia de los datos.
+
+Comando para construir el contenedor y ejecutar el contenedor.
+```
+docker build -t postgres .
+```
+```
+docker run --name postgres_container -d -p 5432:5432 -v $(pwd)/database:/var/lib/postgresql/data postgres
+```
 ## Dockerfile para el frontend usando nginx
 Para este caso es lo mismo en nuestra carpeta de frontend tendremos el siguiente Dockerfile
+``` 
+touch Dockerfile
+``` 
+``` 
+nano Dockerfile
+```
 ```
 # Dockerfile para Nginx 
 
@@ -181,40 +207,42 @@ CMD ["nginx", "-g", "daemon off;"]
 ```
 comando para construir el contenedor y ejecutar el contenedor.
 ```
-docker build -t fronted .
-docker run -d --name nginx_container -p 8081:80 -v /home/administrador/Documentos/dockerFile/proyecto:/usr/share/nginx/html fronted
+docker build -t frontend .
 ```
-La ruta especificado para el origien del volumen de montaje, es en donde se encuentra el proyecto clonado previamente en la carpeta principal
+```
+docker run --name nginx_container -d -p 8081:80 -v $(pwd)/proyecto:/usr/share/nginx/html frontend
+```
 ## Dockerfile para el backend usando ubuntu
-Este Dockerfile debera esta en nuestra carpeta principal
 ```
 # Utiliza la imagen base de Ubuntu
-FROM ubuntu:18.04
+FROM ubuntu
+
 # Actualiza e instala dependencias
-RUN apt-get update -y
-RUN apt install npm -y
+RUN apt-get update -y && \
+    apt-get install -y npm
 
 WORKDIR /root
 
+# Instala paquetes Node.js y crea la estructura del directorio
+RUN npm init -y && \
+    npm install express body-parser pg cors
+
 RUN mkdir backend
+VOLUME /root/backend
+WORKDIR /root/backend
 
-ADD [ "/proyecto/backend.js", "/root/backend"]
-
-# Instala paquetes Node.js
-RUN npm init -y
-RUN npm install express body-parser pg cors -y
+# Copia los archivos necesarios a la imagen
+#COPY . .
 
 # Expone el puerto 3000
 EXPOSE 3000
 
 # Comando predeterminado para ejecutar la aplicación Node.js
-CMD ["node", "/root/backend/backend.js"]
-
+CMD ["node", "backend.js"]
 ```
-Este se encuentra en la carpeta principal, porque estamos copiando el proyecto a la carpeta del backend creada en el contenedor.
-
-comando para construir el contenedor y ejecutar el contenedor.
 ```
 docker build -t backend .
+```
+```
 docker run -it -d --name nodejs_container -p 3000:3000 -v $(pwd)/proyecto:/root/backend backend
 ```
